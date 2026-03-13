@@ -6,6 +6,10 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
+// Force dynamic rendering to bypass build-time env vars
+export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
+
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [analyses, setAnalyses] = useState<any[]>([]);
