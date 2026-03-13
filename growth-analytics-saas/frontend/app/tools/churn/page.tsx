@@ -1,22 +1,18 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import FileUpload from '@/components/FileUpload';
 
 export default function ChurnPredictor() {
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // Mock churn prediction function (replace with real API later)
   const predictChurn = async (file: File) => {
     setLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       setResults({
         totalCustomers: 1240,
@@ -38,11 +34,6 @@ export default function ChurnPredictor() {
       });
       setLoading(false);
     }, 2000);
-  };
-
-  const handleUploadComplete = (data: any) => {
-    // This would be called after file upload
-    console.log('File uploaded:', data);
   };
 
   if (loading) {
@@ -118,7 +109,6 @@ export default function ChurnPredictor() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Risk Summary Cards */}
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-green-50 rounded-xl p-6 text-center">
                 <p className="text-sm text-green-700 mb-1">Low Risk</p>
@@ -137,7 +127,6 @@ export default function ChurnPredictor() {
               </div>
             </div>
 
-            {/* Risk Factors */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">⚠️ Top Risk Factors</h3>
               <div className="space-y-3">
@@ -152,7 +141,6 @@ export default function ChurnPredictor() {
               </div>
             </div>
 
-            {/* Recommendations */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">💡 Recommended Actions</h3>
               <div className="grid md:grid-cols-2 gap-4">
@@ -164,17 +152,7 @@ export default function ChurnPredictor() {
               </div>
             </div>
 
-            {/* Download Button */}
             <div className="text-center">
-              <button
-                onClick={() => {
-                  // Generate and download CSV of at-risk customers
-                  alert('Download feature coming soon!');
-                }}
-                className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition mr-4"
-              >
-                📥 Download At-Risk List
-              </button>
               <button
                 onClick={() => setResults(null)}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"

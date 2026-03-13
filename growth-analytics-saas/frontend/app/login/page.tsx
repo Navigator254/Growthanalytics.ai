@@ -1,6 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
@@ -29,7 +28,6 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      // Redirect to tools page on success
       router.push('/tools');
     } catch (error: any) {
       setError(error.message);
@@ -90,7 +88,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-blue-600 hover:underline">
               Sign up
             </Link>

@@ -1,6 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
@@ -9,6 +8,7 @@ import FileUpload from '@/components/FileUpload';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import EmailModal from '@/components/EmailModal';
 import { supabase } from '@/lib/supabase/client';
+
 export default function SegmentationTool() {
   const [jobId, setJobId] = useState<string | null>(null);
   const [preview, setPreview] = useState<any>(null);
@@ -16,11 +16,9 @@ export default function SegmentationTool() {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
-  // Check if backend is running with improved error handling
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        // Try the health endpoint first with timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
 
@@ -43,8 +41,7 @@ export default function SegmentationTool() {
           setBackendStatus('offline');
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-console.log('❌ Backend check failed:', errorMessage);
+        console.log('❌ Backend check failed');
         setBackendStatus('offline');
       }
     };
@@ -60,7 +57,6 @@ console.log('❌ Backend check failed:', errorMessage);
 
   const handleEmailSubmit = async (email: string) => {
     try {
-      // Save lead to Supabase (always try)
       const { error: supabaseError } = await supabase
         .from('leads')
         .insert([
@@ -74,7 +70,6 @@ console.log('❌ Backend check failed:', errorMessage);
 
       console.log('📧 Lead capture attempted for:', email);
 
-      // Get the full report from backend
       const response = await fetch(`http://localhost:8000/api/report/${jobId}?email=${encodeURIComponent(email)}`);
       
       if (!response.ok) {
@@ -85,7 +80,6 @@ console.log('❌ Backend check failed:', errorMessage);
       const data = await response.json();
       setResults(data.results);
 
-      // If user is logged in, save analysis to their account
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
@@ -103,7 +97,7 @@ console.log('❌ Backend check failed:', errorMessage);
       setShowEmailModal(false);
     } catch (error) {
       console.error('Failed to get report:', error);
-      alert(`Failed to get full report. ${error instanceof Error ? error.message : 'Please try again.'}`);
+      alert('Failed to get full report. Please try again.');
     }
   };
 
@@ -117,7 +111,6 @@ console.log('❌ Backend check failed:', errorMessage);
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        {/* Backend Status Banner - Only show when offline */}
         {backendStatus === 'offline' && (
           <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <p className="text-yellow-800 font-medium">⚠️ Backend server is not running</p>
@@ -127,9 +120,6 @@ console.log('❌ Backend check failed:', errorMessage);
             <code className="block bg-yellow-100 px-3 py-2 rounded mt-2 text-sm font-mono">
               cd ~/Desktop/growth-analytics-saas/backend &amp;&amp; source venv/bin/activate &amp;&amp; uvicorn main:app --reload --port 8000
             </code>
-            <p className="text-yellow-700 text-sm mt-2">
-              Don't worry - you can still upload files. The upload uses a different endpoint.
-            </p>
           </div>
         )}
 

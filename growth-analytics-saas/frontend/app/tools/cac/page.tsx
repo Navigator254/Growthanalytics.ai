@@ -1,6 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
@@ -25,9 +24,8 @@ export default function CACCalculator() {
     const grossMargin = parseFloat(formData.grossMargin) / 100;
     const customers = parseFloat(formData.customers);
 
-    // Calculate metrics
     const arpu = monthlyRevenue / customers;
-    const ltv = arpu * 12 * 3; // Assuming 3-year average customer lifespan
+    const ltv = arpu * 12 * 3;
     const paybackMonths = cac / (arpu * grossMargin);
     const ltvCacRatio = ltv / cac;
     
@@ -73,7 +71,6 @@ export default function CACCalculator() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Input Form */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -150,7 +147,6 @@ export default function CACCalculator() {
             </form>
           </div>
 
-          {/* Results Display */}
           <div className="bg-white rounded-xl shadow-md p-6">
             {results ? (
               <div>
@@ -163,12 +159,12 @@ export default function CACCalculator() {
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">ARPU (Avg Revenue Per User)</span>
+                    <span className="text-gray-600">ARPU</span>
                     <span className="font-semibold text-lg">${results.arpu.toFixed(2)}</span>
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">LTV (Customer Lifetime Value)</span>
+                    <span className="text-gray-600">LTV</span>
                     <span className="font-semibold text-lg">${results.ltv.toFixed(2)}</span>
                   </div>
 
@@ -190,15 +186,6 @@ export default function CACCalculator() {
                     <p className="text-sm text-gray-600 mb-2">Business Health:</p>
                     <p className={`text-2xl font-bold ${results.healthColor}`}>
                       {results.healthScore}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {results.ltvCacRatio > 3 
-                        ? 'Excellent! Your unit economics are strong.'
-                        : results.ltvCacRatio > 2
-                        ? 'Good. Keep optimizing.'
-                        : results.ltvCacRatio > 1
-                        ? 'Fair. Work on improving LTV or reducing CAC.'
-                        : 'Poor. Your business model needs attention.'}
                     </p>
                   </div>
                 </div>

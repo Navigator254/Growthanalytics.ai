@@ -1,6 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
@@ -24,26 +23,8 @@ export default function PersonaGenerator() {
     setError(null);
 
     try {
-      // Call your backend API (replace with real endpoint when ready)
-      const response = await fetch('http://localhost:8000/api/persona', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate persona');
-      }
-
-      const data = await response.json();
-      setPersona(data);
-    } catch (error) {
-      console.error('Error generating persona:', error);
-      setError('Failed to generate persona. Using mock data instead.');
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Fallback to mock data if API fails
       setPersona({
         name: 'Tech-Savvy Professional',
         age: '28-35',
@@ -52,9 +33,10 @@ export default function PersonaGenerator() {
         channels: ['LinkedIn', 'Twitter', 'Tech blogs'],
         painPoints: ['Too many emails', 'Information overload', 'Finding quality products'],
         bio: 'A mid-level professional who values efficiency and quality.',
-        interests: ['Technology', 'Fitness', 'Travel'],
-        brands: ['Apple', 'Nike', 'Tesla']
+        interests: ['Technology', 'Fitness', 'Travel']
       });
+    } catch (error) {
+      setError('Failed to generate persona');
     } finally {
       setLoading(false);
     }
@@ -74,7 +56,6 @@ export default function PersonaGenerator() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Input Form */}
           <div className="bg-white rounded-xl shadow-md p-6">
             {error && (
               <div className="bg-yellow-50 text-yellow-700 p-3 rounded-lg mb-4 text-sm">
@@ -164,7 +145,6 @@ export default function PersonaGenerator() {
             </form>
           </div>
 
-          {/* Results Display */}
           <div className="bg-white rounded-xl shadow-md p-6">
             {loading ? (
               <div className="text-center py-12">
@@ -178,7 +158,7 @@ export default function PersonaGenerator() {
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <p className="text-gray-600 mb-2">📋 Bio</p>
-                    <p className="text-gray-800">{persona.bio || `${persona.name} is a ${persona.age} year old ${persona.industry} professional with interests in ${persona.interests?.join(', ')}.`}</p>
+                    <p className="text-gray-800">{persona.bio}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -221,25 +201,16 @@ export default function PersonaGenerator() {
                     </ul>
                   </div>
 
-                  {persona.interests && (
-                    <div>
-                      <p className="text-sm text-gray-500 mb-2">🌟 Interests</p>
-                      <div className="flex flex-wrap gap-2">
-                        {persona.interests.map((interest: string, i: number) => (
-                          <span key={i} className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
-                            {interest}
-                          </span>
-                        ))}
-                      </div>
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">🌟 Interests</p>
+                    <div className="flex flex-wrap gap-2">
+                      {persona.interests.map((interest: string, i: number) => (
+                        <span key={i} className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+                          {interest}
+                        </span>
+                      ))}
                     </div>
-                  )}
-
-                  <button
-                    onClick={() => window.print()}
-                    className="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition mt-4"
-                  >
-                    📥 Download Persona PDF
-                  </button>
+                  </div>
                 </div>
               </div>
             ) : (

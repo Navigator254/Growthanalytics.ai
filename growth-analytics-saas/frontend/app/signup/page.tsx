@@ -1,6 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
@@ -32,7 +31,6 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      // Sign up the user
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -45,7 +43,6 @@ export default function SignupPage() {
 
       if (error) throw error;
 
-      // Create a profile record
       if (data.user) {
         await supabase.from('profiles').insert([
           {
@@ -56,7 +53,6 @@ export default function SignupPage() {
         ]);
       }
 
-      // Redirect to login with success message
       router.push('/login?message=Check your email to confirm your account');
     } catch (error: any) {
       setError(error.message);
