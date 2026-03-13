@@ -10,36 +10,49 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [analyses, setAnalyses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [envError, setEnvError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is authenticated
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      
-      setUser(user);
-      
-      // Fetch user's saved analyses
-      const { data, error } = await supabase
-        .from('analysis_jobs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching analyses:', error);
-      } else {
-        setAnalyses(data || []);
-      }
-      
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      setEnvError('Supabase environment variables are not configured. Please contact support.');
       setLoading(false);
+      return;
+    }
+
+    const checkUser = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+          router.push('/login');
+          return;
+        }
+
+        setUser(user);
+
+        const { data, error } = await supabase
+          .from('analysis_jobs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching analyses:', error);
+        } else {
+          setAnalyses(data || []);
+        }
+      } catch (error) {
+        console.error('Dashboard error:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    
+
     checkUser();
   }, [router]);
 
@@ -47,6 +60,19 @@ export default function DashboardPage() {
     await supabase.auth.signOut();
     router.push('/');
   };
+
+  // Handle environment variable error
+  if (envError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-xl shadow-md">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold mb-2">Configuration Error</h2>
+          <p className="text-gray-600">{envError}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -70,7 +96,7 @@ export default function DashboardPage() {
               <Link href="/pricing" className="text-gray-700 hover:text-blue-600">Pricing</Link>
               <button
                 onClick={handleSignOut}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300"
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
               >
                 Sign Out
               </button>
@@ -84,7 +110,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <Link
             href="/tools/segmentation"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             + New Analysis
           </Link>
@@ -93,20 +119,20 @@ export default function DashboardPage() {
         {/* User Info */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Welcome, {user?.email}</h2>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg text-center">
               <div className="text-2xl font-bold text-blue-600">{analyses.length}</div>
               <div className="text-sm text-gray-600">Total Analyses</div>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
+            <div className="p-4 bg-green-50 rounded-lg text-center">
               <div className="text-2xl font-bold text-green-600">
                 {analyses.filter(a => a.segments).length}
               </div>
               <div className="text-sm text-gray-600">With Segments</div>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
+            <div className="p-4 bg-purple-50 rounded-lg text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {new Date(user?.created_at || '').toLocaleDateString()}
+                {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
               </div>
               <div className="text-sm text-gray-600">Member Since</div>
             </div>
@@ -123,7 +149,7 @@ export default function DashboardPage() {
             <p className="text-gray-600 mb-6">Start by uploading your first customer dataset</p>
             <Link
               href="/tools/segmentation"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 inline-block"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition inline-block"
             >
               Start Free Analysis →
             </Link>
@@ -142,9 +168,9 @@ export default function DashboardPage() {
               <tbody className="divide-y divide-gray-200">
                 {analyses.map((job) => (
                   <tr key={job.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{job.filename}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{job.filename || 'Untitled'}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(job.created_at).toLocaleDateString()}
+                      {job.created_at ? new Date(job.created_at).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {job.segments ? Object.keys(job.segments).length : 'N/A'}
