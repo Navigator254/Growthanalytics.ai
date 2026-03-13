@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import FileUpload from '@/components/FileUpload';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import EmailModal from '@/components/EmailModal';
-import { supabase } from '@/lib/supabase';
-
+import { supabase } from '@/lib/supabase/client';
 export default function SegmentationTool() {
   const [jobId, setJobId] = useState<string | null>(null);
   const [preview, setPreview] = useState<any>(null);
@@ -40,7 +39,8 @@ export default function SegmentationTool() {
           setBackendStatus('offline');
         }
       } catch (error) {
-        console.log('❌ Backend check failed:', error.message);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+console.log('❌ Backend check failed:', errorMessage);
         setBackendStatus('offline');
       }
     };
