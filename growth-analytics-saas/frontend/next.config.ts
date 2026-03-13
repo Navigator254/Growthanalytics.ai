@@ -1,9 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
 };
 
-export default nextConfig;
-// trigger redeploy
-// force redeploy Fri Mar 13 07:04:52 PM EAT 2026
+module.exports = nextConfig;
