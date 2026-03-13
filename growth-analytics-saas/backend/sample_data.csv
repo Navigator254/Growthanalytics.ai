@@ -1,0 +1,6 @@
+ID,Year_Birth,Education,Marital_Status,Income,Kidhome,Teenhome,Recency,MntWines,MntFruits,MntMeatProducts,MntFishProducts,MntSweetProducts,MntGoldProds,NumDealsPurchases,NumWebPurchases,NumCatalogPurchases,NumStorePurchases,NumWebVisitsMonth
+5524,1957,Graduation,Single,58138,0,0,58,635,88,546,172,88,88,2,8,4,10,2
+2174,1954,Graduation,Single,46344,1,1,38,11,1,6,2,1,6,1,1,1,4,5
+4141,1965,Graduation,Together,71613,0,0,26,426,49,127,111,32,16,1,8,4,10,2
+6182,1984,Graduation,Together,26646,1,0,26,11,4,20,2,3,6,2,2,0,2,6
+5324,1981,PhD,Married,58293,1,0,94,173,43,118,37,23,36,2,4,2,6,4
