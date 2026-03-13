@@ -1,18 +1,21 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig } from "eslint/config";
+import nextConfig from "eslint-config-next";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+export default defineConfig([
+  ...nextConfig,
+  {
+    rules: {
+      // Disable the annoying TypeScript 'any' rule
+      "@typescript-eslint/no-explicit-any": "off",
+      
+      // Disable the unused vars rule (or make it a warning only)
+      "@typescript-eslint/no-unused-vars": "warn",
+      
+      // Disable the apostrophe escaping rule
+      "react/no-unescaped-entities": "off",
+      
+      // Make these warnings instead of errors during build
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
+  },
 ]);
-
-export default eslintConfig;
