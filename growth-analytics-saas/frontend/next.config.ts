@@ -11,3 +11,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+// force redeploy with env vars Sat Mar 14 02:07:41 AM EAT 2026
