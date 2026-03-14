@@ -1,10 +1,25 @@
-import { createBrowserClient } from "@supabase/ssr";
+'use client';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Missing Supabase environment variables");
+// Lazy-load env vars to avoid build-time crash
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error(
+    '⚠️ Supabase environment variables are missing. Check Vercel settings!'
+  );
 }
 
-export const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+// Create browser client with auth helpers
+export const supabase = createBrowserSupabaseClient({
+  supabaseUrl,
+  supabaseKey: supabaseAnonKey,
+  options: {
+    auth: {
+      persistSession: true,
+      detectSessionInUrl: true,
+    },
+  },
+});
